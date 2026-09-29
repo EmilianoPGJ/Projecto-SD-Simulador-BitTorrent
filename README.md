@@ -79,14 +79,6 @@ archivos/
 ```
 
 Los archivos pueden ser de diferentes tipos.
-
-Para las pruebas del proyecto se pueden utilizar archivos grandes, por ejemplo:
-
-```text
-musica.mp3  → 200 MB o más
-video.mp4   → 200 MB o más
-```
-
 ---
 
 ## `torrents/`
