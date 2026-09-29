@@ -1,8 +1,6 @@
 # Projecto-SD-Simulador-BitTorrent
 En este repositorio se ponen los archivos utilizado para la creación de la simulación BitTorrent en local, junto a las carpetas necesarias que deben estar creadas de ante mano para que funcione correctamente
 
-Simulador de una red **BitTorrent P2P** desarrollado en Java para Windows.
-
 El proyecto permite trabajar con un **Tracker** y múltiples **Peers**, donde los archivos se dividen en fragmentos que pueden descargarse y compartirse entre diferentes nodos.
 
 El objetivo es simular de manera sencilla el funcionamiento básico de una red BitTorrent:
@@ -20,7 +18,7 @@ El objetivo es simular de manera sencilla el funcionamiento básico de una red B
 
 ---
 
-# 1. Estructura del proyecto
+# Estructura del proyecto
 
 La estructura básica del proyecto es:
 
@@ -62,7 +60,7 @@ peer_D/
 
 ---
 
-# 2. Carpetas necesarias
+#  Carpetas necesarias
 
 ## `archivos/`
 
@@ -99,7 +97,7 @@ Entre los datos principales se encuentran:
 
 ---
 
-# 3. Archivos principales
+#  Archivos principales
 
 ## `Torrent.java`
 
@@ -114,7 +112,7 @@ archivo.torrent
 ```
 ---
 
-# 4. `Tracker.java`
+#  `Tracker.java`
 
 El Tracker funciona como el punto de coordinación de la red.
 
@@ -136,7 +134,7 @@ Cuando un Peer necesita descargar un archivo, consulta al Tracker para saber qu�
 
 ---
 
-# 5. `Peer.java`
+#  `Peer.java`
 
 Es el programa principal de cada nodo de la red.
 
@@ -149,7 +147,7 @@ Un Peer puede funcionar simultáneamente como:
 
 
 
-# 6. Comunicación entre los componentes
+#  Comunicación entre los componentes
 
 La comunicación básica es:
 
@@ -177,7 +175,7 @@ La transferencia de los archivos ocurre directamente entre los Peers.
 
 ---
 
-# 7. Flujo general del programa
+#  Flujo general del programa
 
 ## Paso 1 — Crear el torrent
 
@@ -226,7 +224,7 @@ Cada Peer utiliza un puerto diferente.
 
 ---
 
-# 8. Compartir un archivo
+#  Compartir un archivo
 
 Si un Peer tiene un archivo completo en:
 
@@ -246,7 +244,7 @@ SEEDER
 
 ---
 
-# 9. Descargar un archivo
+#  Descargar un archivo
 
 Cuando otro Peer inicia una descarga:
 
@@ -275,7 +273,7 @@ peer_B/downloads/
 
 ---
 
-# 10. Descarga concurrente
+#   Descarga concurrente
 
 Las piezas pueden descargarse de manera concurrente.
 
@@ -285,7 +283,7 @@ El proyecto utiliza `ExecutorService` para administrar los hilos de descarga.
 
 ---
 
-# 11. Recuperación de descargas
+#  Recuperación de descargas
 
 Si una descarga se interrumpe, no es necesario comenzar nuevamente.
 El archivo `.pieces` indica qué fragmentos ya fueron completados.
@@ -293,7 +291,7 @@ Al continuar la descarga, las piezas anteriores se conservan y solamente se soli
 
 ---
 
-# 12. Verificación de las piezas
+#  Verificación de las piezas
 
 Cada pieza tiene un hash SHA-1.
 
