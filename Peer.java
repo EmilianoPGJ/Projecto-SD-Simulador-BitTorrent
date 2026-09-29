@@ -1,4 +1,4 @@
-import java.io.*;
+ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.security.*;
@@ -73,7 +73,7 @@ public class Peer {
         Files.createDirectories(downloadsDir);
         server = new ServerSocket(port);
         pool.submit(this::acceptLoop);
-        String ip = InetAddress.getLocalHost().getHostAddress();
+        String ip = detectLocalIp();
         tracker("REGISTER|" + id + "|" + ip + "|" + port);
         autoShare();
         System.out.println("\n==============================================");
@@ -83,6 +83,48 @@ public class Peer {
         System.out.println("Tracker  : " + trackerHost + ":" + trackerPort);
         menuLoop();
         shutdown();
+    }
+
+
+    // IP fija opcional pasada por linea de comandos (5to argumento)
+    private static String overrideIp = null;
+
+    private String detectLocalIp() {
+        if (overrideIp != null && !overrideIp.isBlank()) return overrideIp;
+        List<String[]> candidates = new ArrayList<>(); 
+        try {
+            for (NetworkInterface ni : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+                if (!ni.isUp() || ni.isLoopback()) continue;
+                for (InetAddress a : Collections.list(ni.getInetAddresses())) {
+                    if (a instanceof Inet4Address && !a.isLoopbackAddress() && !a.isLinkLocalAddress())
+                        candidates.add(new String[]{a.getHostAddress(), ni.getDisplayName() + " " + ni.getName()});
+                }
+            }
+        } catch (SocketException ignored) {}
+
+       
+        for (String[] c : candidates)
+            if (c[0].startsWith("192.168.0.") && !isVirtualAdapter(c[1])) return c[0];
+     
+        for (String[] c : candidates)
+            if (c[0].startsWith("192.168.0.")) return c[0];
+        try (Socket s = new Socket()) {
+            s.connect(new InetSocketAddress(trackerHost, trackerPort), 2000);
+            String ip = s.getLocalAddress().getHostAddress();
+            if (!ip.startsWith("127.") && !ip.equals("0.0.0.0")) return ip;
+        } catch (IOException ignored) {}
+        for (String[] c : candidates)
+            if (c[0].startsWith("192.168.") || c[0].startsWith("10.") || c[0].matches("172\\.(1[6-9]|2\\d|3[01])\\..*"))
+                if (!isVirtualAdapter(c[1])) return c[0];
+        try { return InetAddress.getLocalHost().getHostAddress(); }
+        catch (UnknownHostException e) { return "127.0.0.1"; }
+    }
+
+    private static boolean isVirtualAdapter(String name) {
+        String n = name.toLowerCase();
+        return n.contains("virtualbox") || n.contains("vmware") || n.contains("vmnet")
+            || n.contains("hyper-v") || n.contains("vethernet") || n.contains("docker")
+            || n.contains("vboxnet") || n.contains("wsl") || n.contains("virtual");
     }
 
     private void menuLoop() {
@@ -395,7 +437,8 @@ public class Peer {
     private void shutdown(){try{running=false;if(server!=null)server.close();}catch(IOException ignored){}pool.shutdownNow();console.close();}
 
     public static void main(String[] args)throws Exception{
-        if(args.length!=4){System.out.println("Uso: java Peer <id> <puerto-peer> <ip-tracker> <puerto-tracker>");return;}
+        if(args.length<4||args.length>5){System.out.println("Uso: java Peer <id> <puerto-peer> <ip-tracker> <puerto-tracker> [ip-local-opcional]");return;}
+        if(args.length==5) overrideIp=args[4];
         new Peer(args[0],Integer.parseInt(args[1]),args[2],Integer.parseInt(args[3])).start();
     }
 }
