@@ -107,51 +107,6 @@ Entre los datos principales se encuentran:
 
 ---
 
-## `peer_A/`, `peer_B/`, `peer_C/`
-
-Cada Peer tiene su propio directorio.
-
-Esto permite ejecutar varios Peers en la misma computadora sin mezclar sus archivos.
-
-### `shared/`
-
-Contiene los archivos que el Peer comparte.
-
-Si un archivo está completo en esta carpeta, el Peer funciona como **Seeder** para ese archivo.
-
-Ejemplo:
-
-```text
-peer_A/shared/
-└── musica.mp3
-```
-
----
-
-### `downloads/`
-
-Contiene los archivos que el Peer está descargando.
-
-Por ejemplo:
-
-```text
-peer_B/downloads/
-├── musica.mp3
-└── musica.mp3.pieces
-```
-
-El archivo:
-
-```text
-musica.mp3.pieces
-```
-
-guarda las piezas que ya fueron descargadas correctamente.
-
-Esto permite continuar una descarga después de una interrupción.
-
----
-
 # 3. Archivos principales
 
 ## `Torrent.java`
@@ -159,22 +114,12 @@ Esto permite continuar una descarga después de una interrupción.
 Es el generador de archivos `.torrent`.
 
 Su función principal es tomar un archivo de `archivos/` y dividirlo lógicamente en piezas.
-
-Actualmente utiliza piezas de:
-
-```text
-512 KB
-```
-
 Para cada pieza calcula un hash SHA-1.
-
-
 Después genera el archivo:
 
 ```text
 archivo.torrent
 ```
-
 ---
 
 # 4. `Tracker.java`
